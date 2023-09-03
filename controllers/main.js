@@ -6,6 +6,7 @@ send back to front-end
 setup authentification so only request with JWT can access the dashboard
 */
 
+const jwt = require("jsonwebtoken")
 const CustomAPIError = require("../errors/custom-error")
 
 const login = async (req, res) => {
@@ -19,7 +20,12 @@ const login = async (req, res) => {
         throw new CustomAPIError("Please provide email and password", 400)
     }
 
-    res.send("Fake Login/Register/Signup Route")
+    // Dummy id, normally provided by db
+    const id = new Date().getDate()
+
+    const token = jwt.sign({ id, userName }, process.env.JWT_SECRET, { expiresIn: "30d" })
+
+    res.status(200).json({ msg: "User created", token })
 }
 
 const dashboard = async (req, res) => {
