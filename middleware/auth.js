@@ -1,8 +1,25 @@
 
 
+const jwt = require("jsonwebtoken")
+const { UnauthenticatedError } = require("../errors")
+
 const authentificationMiddleware = async (req, res, next) => {
-    console.log(req.headers.authorization);
-    next()
+    const authHeader = req.headers.authorization;
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        throw new UnauthenticatedError("No token provided")
+    }
+
+    const token = authHeader.split(" ")[1]
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const { id, userName } = decoded;
+        req.user = { id, userName }
+        next()
+    } catch (error) {
+        throw new UnauthenticatedError("Not authorized to access this route")
+    }
 }
 
 module.exports = authentificationMiddleware
