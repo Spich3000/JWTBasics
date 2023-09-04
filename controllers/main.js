@@ -30,6 +30,7 @@ const login = async (req, res) => {
 
 const dashboard = async (req, res) => {
     const authHeader = req.headers.authorization;
+
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
         throw new CustomAPIError("No token provided", 401)
     }
@@ -46,7 +47,6 @@ const dashboard = async (req, res) => {
     } catch (error) {
         throw new CustomAPIError("Not authorized to access this route", 401)
     }
-
 }
 
 module.exports = {
